@@ -24,7 +24,7 @@ form {
   margin-bottom: 2rem;
 }
 
-input {
+.todoinput {
   border: none;
   border-bottom: 1px solid black;
 }
