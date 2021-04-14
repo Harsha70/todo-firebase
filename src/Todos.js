@@ -1,7 +1,7 @@
 import React from 'react'
 import "./App.css";
 import { useState } from "react";
-import {firestore} from "./firebase"
+import {auth, firestore} from "./firebase"
 import firebase from './firebase'
 import {useCollectionData} from 'react-firebase-hooks/firestore'
 
@@ -10,10 +10,12 @@ import {useCollectionData} from 'react-firebase-hooks/firestore'
 const Todos = () => {
     const [todo, setTodo] = useState("");
     
-    const todosRef = firestore.collection(`todos/`);
+    const todosRef = firestore.collection(`users/${auth.currentUser.uid}/todos`);
+    // const todosRef = firestore.collection(`todos/`);
     console.log("todosRef", todosRef)
     const [todos] = useCollectionData(todosRef, { idField: "id" });
     console.log("todos", todos)
+    const signOut = () => auth.signOut();
   
     const onSubmitTodo = (event) => {
       event.preventDefault();
@@ -29,14 +31,15 @@ const Todos = () => {
     return (
       <>
         <header>
+          <button onClick={signOut}>Sign Out</button>
         </header>
         <main>
           <form onSubmit={onSubmitTodo}>
-            <input
+            <input className = "todoinput"
               required
               value={todo}
               onChange={(e) => setTodo(e.target.value)}
-              placeholder="Add ToDoS"
+              placeholder="Add ToDos"
             />
             <button type="submit">Add</button>
           </form>
@@ -47,7 +50,8 @@ const Todos = () => {
   };
   
   const Todo = ({ id, complete, text }) => {
-    const todosRef = firestore.collection(`todos/`);
+    // const todosRef = firestore.collection(`todos/`);
+    const todosRef = firestore.collection(`users/${auth.currentUser.uid}/todos`);
     const onCompleteTodo = (id, complete) =>
       todosRef.doc(id).set({ complete: !complete }, { merge: true });
   
